@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.NoSuchElementException;
@@ -38,7 +39,7 @@ public class UserController {
         binder.addValidators(userCreateFormValidator);
     }
 
-    @PreAuthorize("@currentUserServiceImpl.canAccessUser(principal, #id)")
+/*    @PreAuthorize("@currentUserServiceImpl.canAccessUser(principal, #id)")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String getUserPage(@PathVariable(value = "id") Long id, Model model) {
 
@@ -47,7 +48,7 @@ public class UserController {
 
         return "userPage";
 
-    }
+    }*/
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String getUserCreatePage(Model model) {
@@ -59,20 +60,41 @@ public class UserController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String postUserCreatePage(@Valid @ModelAttribute("form") UserCreateForm form,
-                                     BindingResult bindingResult) {
+    public String postUserCreatePage(
+            @Valid @ModelAttribute("form") UserCreateForm form,
+            BindingResult bindingResult,
+            RedirectAttributes model) {
+
+        User user = null;
 
         if (bindingResult.hasErrors()) {
             return "user/create";
         }
 
         try {
-            userService.create(form);
+            user = userService.create(form);
         } catch (DataIntegrityViolationException e) {
             bindingResult.reject("username.exists", "Username already exists");
             return "user/create";
         }
 
-        return "redirect:/users";
+        model.addAttribute("user", user);
+        model.addAttribute("userId", user.getId());
+
+        return "redirect:/{userId}";
+    }
+
+    @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
+    public String showUserDashboard(@PathVariable("userId") Long userId,
+                                    Model model) {
+
+        // need error handling
+
+        User user = userService.getUserById(userId)
+                .orElseThrow(() -> new NoSuchElementException(String.format("User=%s not found", userId)));
+
+        model.addAttribute("user", user);
+
+        return "user/dashboard";
     }
 }
