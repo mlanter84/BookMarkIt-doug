@@ -20,7 +20,7 @@ public class Bookmark {
     @Column(length = 2048)
     private String description;
 
-    @ManyToOne
+    @ManyToOne()
     private User user;
 
     public Bookmark() { }
@@ -39,6 +39,14 @@ public class Bookmark {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override

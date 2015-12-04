@@ -1,11 +1,15 @@
 package com.bookmarkit.controller;
 
+import com.bookmarkit.domain.Bookmark;
 import com.bookmarkit.domain.User;
+import com.bookmarkit.form.BookmarkCreateForm;
 import com.bookmarkit.form.UserCreateForm;
+import com.bookmarkit.service.BookmarkSerivce;
 import com.bookmarkit.service.UserService;
 import com.bookmarkit.validator.UserCreateFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +19,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 /**
  * Created by 580782 on 11/25/2015.
@@ -27,11 +34,15 @@ public class UserController {
 
     private final UserService userService;
     private final UserCreateFormValidator userCreateFormValidator;
+    private final BookmarkSerivce bookmarkSerivce;
+
 
     @Autowired
-    public UserController(UserService userService, UserCreateFormValidator userCreateFormValidator) {
+    public UserController(UserService userService, UserCreateFormValidator userCreateFormValidator,
+                          BookmarkSerivce bookmarkSerivce) {
         this.userService = userService;
         this.userCreateFormValidator = userCreateFormValidator;
+        this.bookmarkSerivce = bookmarkSerivce;
     }
 
     @InitBinder("form")
@@ -78,10 +89,9 @@ public class UserController {
             return "user/create";
         }
 
-        model.addAttribute("user", user);
-        model.addAttribute("userId", user.getId());
+        model.addFlashAttribute("user", user);
 
-        return "redirect:/{userId}";
+        return "redirect:/users/" + user.getId();
     }
 
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
@@ -89,12 +99,29 @@ public class UserController {
                                     Model model) {
 
         // need error handling
+        User user = null;
 
-        User user = userService.getUserById(userId)
-                .orElseThrow(() -> new NoSuchElementException(String.format("User=%s not found", userId)));
+        if (!model.containsAttribute("user")) {
+            user = userService.getUserById(userId)
+                    .orElseThrow(() -> new NoSuchElementException(String.format("User=%s not found", userId)));
+        } else {
+            user = (User)model.asMap().get("user");
+        }
 
+        List<Bookmark> bookmarks;
+        bookmarks= user.getBookmarks().orElse(new ArrayList<>());
         model.addAttribute("user", user);
+        model.addAttribute("bookmarks", bookmarks);
 
         return "user/dashboard";
     }
+
+/*    @RequestMapping(value = "/{userId}/add", method = RequestMethod.POST)
+    @ResponseBody
+    public Bookmark createNewBookmark(@Valid @RequestBody BookmarkCreateForm form) {
+
+        Bookmark bookmark = bookmarkSerivce.create(form);
+        return bookmark;
+    }*/
+
 }

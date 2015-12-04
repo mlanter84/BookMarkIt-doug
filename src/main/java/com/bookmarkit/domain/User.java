@@ -2,6 +2,7 @@ package com.bookmarkit.domain;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by 580782 on 11/25/2015.
@@ -70,8 +71,8 @@ public class User {
         this.role = role;
     }
 
-    public List<Bookmark> getBookmarks() {
-        return bookmarks;
+    public Optional<List<Bookmark>> getBookmarks() {
+        return Optional.ofNullable(bookmarks);
     }
 
     public void setBookmarks(List<Bookmark> bookmarks) {

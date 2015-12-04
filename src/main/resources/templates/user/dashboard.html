@@ -8,5 +8,28 @@
 <body>
   Take a look, sonny.
   <p th:text="${user.getUsername()}">Username</p>
+
+  <div th:each="bookmark : ${bookmarks}">
+      <div>
+          <p th:text="${bookmark.getUrl()}">Bookmark URL</p>
+          <p th:text="${bookmark.getDescription()}">Bookmark Description</p>
+      </div>
+  </div>
+
+
+  <div id="addBookmark">
+      <form data-bind="submit: addBookmark">
+          <p>Add Bookmark</p>
+          <label>URL</label>
+          <input data-bind="value: newBookmarkUrl" placeholder="Enter a URL" />
+          <input data-bind="value: newBookmarkDescription" placeholder="Enter a description" />
+          <button type="submit">Add Bookmark</button>
+      </form>
+  </div>
+  <script>
+      $(document).ready(function(){
+         $('#addBookmark').app
+      });
+  </script>
 </body>
 </html>
