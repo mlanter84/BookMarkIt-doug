@@ -5,12 +5,18 @@ import com.bookmarkit.domain.User;
 import com.bookmarkit.form.BookmarkCreateForm;
 import com.bookmarkit.form.UserCreateForm;
 import com.bookmarkit.service.BookmarkSerivce;
+import com.bookmarkit.service.CurrentUserDetailsService;
 import com.bookmarkit.service.UserService;
 import com.bookmarkit.validator.UserCreateFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -94,11 +101,12 @@ public class UserController {
         return "redirect:/users/" + user.getId();
     }
 
+    @PreAuthorize("@currentUserServiceImpl.canAccessUser(principal, #userId)")
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
     public String showUserDashboard(@PathVariable("userId") Long userId,
-                                    Model model) {
+                                    Model model,
+                                    Principal principal) {
 
-        // need error handling
         User user = null;
 
         if (!model.containsAttribute("user")) {
@@ -115,13 +123,4 @@ public class UserController {
 
         return "user/dashboard";
     }
-
-/*    @RequestMapping(value = "/{userId}/add", method = RequestMethod.POST)
-    @ResponseBody
-    public Bookmark createNewBookmark(@Valid @RequestBody BookmarkCreateForm form) {
-
-        Bookmark bookmark = bookmarkSerivce.create(form);
-        return bookmark;
-    }*/
-
 }

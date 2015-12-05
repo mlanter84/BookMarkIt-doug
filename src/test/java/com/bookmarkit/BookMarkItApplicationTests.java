@@ -49,7 +49,7 @@ public class BookMarkItApplicationTests {
 	public void contextLoads() {
 	}
 
-	@Before
+/*	@Before
 	public void setup() {
         this.mockMvc = standaloneSetup(new UserController(userService, userCreateFormValidator, bookmarkSerivce)).build();
 
@@ -60,7 +60,7 @@ public class BookMarkItApplicationTests {
         user.setPasswordConfirmation("password");
         user.setRole(Role.USER);
         userService.create(user);
-	}
+	}*/
 
     @Test
     public void canGetCreatedUser() throws Exception {

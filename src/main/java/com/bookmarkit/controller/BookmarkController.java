@@ -44,4 +44,12 @@ public class BookmarkController {
         return bookmark;
     }
 
+/*    @RequestMapping("{userId}/view/{bookmarkId}")
+    public Bookmark viewBookmark(@PathVariable("userId") Long userId, @PathVariable("bookmarkId") Long bookmarkId) {
+        User user = userService.getUserById(userId)
+                .orElseThrow(() -> new NoSuchElementException(String.format("User=%s not found", userId)));
+
+        Bookmark bookmark =
+    }*/
+
 }
