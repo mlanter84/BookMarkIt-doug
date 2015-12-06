@@ -19,7 +19,13 @@ function BookmarkListViewModel() {
         self.bookmarks.push(new Bookmark({url: this.newBookmarkUrl(), description: this.newBookmarkDescription()}));
     }
     self.save = function() {
-        $.ajax("/")
-    }
+        $.ajax("/add", {
+            data: ko.toJSON({bookmarks: self.bookmarks}),
+            type: "post", contentType: "application/json",
+            success: function(result) { alert(result) }
+        });
+    };
 
 }
+
+ko.applyBindings(new BookmarkListViewModel());

@@ -14,9 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,6 +26,8 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -41,15 +45,15 @@ public class UserController {
 
     private final UserService userService;
     private final UserCreateFormValidator userCreateFormValidator;
-    private final BookmarkSerivce bookmarkSerivce;
+    private final AuthenticationManager authenticationManager;
 
 
     @Autowired
     public UserController(UserService userService, UserCreateFormValidator userCreateFormValidator,
-                          BookmarkSerivce bookmarkSerivce) {
+                          AuthenticationManager authenticationManager) {
         this.userService = userService;
         this.userCreateFormValidator = userCreateFormValidator;
-        this.bookmarkSerivce = bookmarkSerivce;
+        this.authenticationManager = authenticationManager;
     }
 
     @InitBinder("form")
@@ -81,7 +85,8 @@ public class UserController {
     public String postUserCreatePage(
             @Valid @ModelAttribute("form") UserCreateForm form,
             BindingResult bindingResult,
-            RedirectAttributes model) {
+            RedirectAttributes model,
+            HttpServletRequest request) {
 
         User user = null;
 
@@ -98,14 +103,28 @@ public class UserController {
 
         model.addFlashAttribute("user", user);
 
+        authenticateUserAndSetSession(user, request);
+        
         return "redirect:/users/" + user.getId();
+    }
+
+    private void authenticateUserAndSetSession(User user, HttpServletRequest request) {
+        String username = user.getUsername();
+        String password = user.getPassword();
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
+
+        request.getSession();
+
+        token.setDetails(new WebAuthenticationDetails(request));
+        Authentication authenticatedUser = authenticationManager.authenticate(token);
+
+        SecurityContextHolder.getContext().setAuthentication(authenticatedUser);
     }
 
     @PreAuthorize("@currentUserServiceImpl.canAccessUser(principal, #userId)")
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
     public String showUserDashboard(@PathVariable("userId") Long userId,
-                                    Model model,
-                                    Principal principal) {
+                                    Model model) {
 
         User user = null;
 

@@ -1,10 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+                layout:decorator="layout">
 <head>
     <meta charset="UTF-8"></meta>
     <title>Home Page</title>
 </head>
 <body>
-<h1>Welcome to the home page</h1>
+<div class="jumbotron" layout:fragment="content">
+    <h1>Welcome to BookMarkit</h1>
+    <p>This website will allow you the ability to store bookmarks that you like to frequent,
+        this will allow you the ability to not just store them on your computer but access
+        them from any computer in the world!</p>
+
+</div>
 </body>
 </html>

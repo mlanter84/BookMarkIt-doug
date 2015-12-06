@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout">
 <head>
     <meta charset="UTF-8"></meta>
     <title>DashBoard Page Yo</title>
+    <script th:src="@{/webjars/knockout/3.4.0/knockout.js}"></script>
+    <!--<script th:src="@{/js/bookmarkViewModel.js}"></script>-->
 </head>
 <body>
-  Take a look, sonny.
+<div layout:fragment="content">
   <p th:text="${user.getUsername()}">Username</p>
 
   <div th:each="bookmark : ${bookmarks}">
@@ -26,10 +30,42 @@
           <button type="submit">Add Bookmark</button>
       </form>
   </div>
-  <script>
-      $(document).ready(function(){
-         $('#addBookmark').app
-      });
+  <script type="text/javascript" th:inline="javascript">
+      /*<![CDATA[*/
+
+      function Bookmark(data) {
+          this.url = ko.observable(data.url);
+          this.description = ko.observable(data.description);
+      }
+
+      function BookmarkListViewModel() {
+          // Data
+          var self = this;
+          self.bookmarks = ko.observableArray([]);
+          self.newBookmarkUrl = ko.observable();
+          self.newBookmarkDescription = ko.observable();
+
+          // operations
+          self.addBookmark = function() {
+              console.log("adding a bookmark")
+              console.log("new bookmark url: " + this.newBookmarkUrl());
+              self.bookmarks.push(new Bookmark({url: this.newBookmarkUrl(), description: this.newBookmarkDescription()}));
+
+              var postString = /*[[ ${user.getId()} ]]*/ + "/add";
+
+              $.ajax(/*[+'/[[${user.getId()}]]'+]*/, {
+                  data: ko.toJSON({url: self.newBookmarkUrl, description: self.newBookmarkDescription}),
+                  type: "post", contentType: "application/json",
+                  success:
+              }).fail(function() {
+                  console.log("fail");
+              });
+          };
+      }
+
+      ko.applyBindings(new BookmarkListViewModel());
+      /*]]>*/
   </script>
+</div>
 </body>
 </html>

@@ -10,6 +10,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.header.writers.frameoptions.WhiteListedAllowFromStrategy;
+import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
+
+import java.util.Arrays;
 
 /**
  * Created by 580782 on 11/27/2015.
@@ -27,8 +31,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                    .antMatchers("/").permitAll()
                     .antMatchers("/users/create").permitAll()
+                    .antMatchers("/webjars/**").permitAll()
+                    .antMatchers("/console/**").permitAll()
+                    .antMatchers("/register/**").anonymous()
                     .anyRequest().fullyAuthenticated()
                 .and()
                 .formLogin()

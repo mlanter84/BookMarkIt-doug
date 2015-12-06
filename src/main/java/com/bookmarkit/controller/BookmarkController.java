@@ -7,10 +7,7 @@ import com.bookmarkit.service.BookmarkSerivce;
 import com.bookmarkit.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.NoSuchElementException;
@@ -32,14 +29,19 @@ public class BookmarkController {
         this.bookmarkSerivce = bookmarkSerivce;
     }
 
-    @RequestMapping("{userId}/add")
+    @RequestMapping(value = "/{userId}", method = RequestMethod.POST)
     public Bookmark addBookmark(@PathVariable("userId") Long userId, @RequestBody BookmarkCreateForm form) {
+
+        System.out.println("adding bookmark");
+        System.out.println(form.getUrl());
+        System.out.println(form.getDescription());
 
         User user = userService.getUserById(userId)
                 .orElseThrow(() -> new NoSuchElementException(String.format("User=%s not found", userId)));
 
         form.setUser(user);
         Bookmark bookmark = bookmarkSerivce.create(form);
+        System.out.println(bookmark);
 
         return bookmark;
     }
