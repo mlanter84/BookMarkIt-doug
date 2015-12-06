@@ -104,7 +104,7 @@ public class UserController {
         model.addFlashAttribute("user", user);
 
         authenticateUserAndSetSession(user, request);
-        
+
         return "redirect:/users/" + user.getId();
     }
 
@@ -126,6 +126,7 @@ public class UserController {
     public String showUserDashboard(@PathVariable("userId") Long userId,
                                     Model model) {
 
+        //
         User user = null;
 
         if (!model.containsAttribute("user")) {
