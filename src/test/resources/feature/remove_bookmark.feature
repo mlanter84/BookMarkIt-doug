@@ -1,3 +1,6 @@
+# Revision History
+# 11-28-2015 - Initial Draft - Matt
+
 Feature: Remove a bookmark
 	Users must be logged in to remove bookmarks
 	The dashboard must contain at least 1 bookmark to be able to remove a bookmark

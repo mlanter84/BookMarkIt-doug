@@ -1,3 +1,6 @@
+# Revision History
+# 11-28-2015 - Initial Draft - Matt
+
 Feature: Do not add a duplicate bookmark
 	Users must be logged in to attempt to add bookmarks
 	The dashboard must contain at least 1 bookmark

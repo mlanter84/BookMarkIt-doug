@@ -1,3 +1,6 @@
+# Revision History
+# 11-28-2015 - Initial Draft - Matt
+
 Feature: View a bookmark’s details
 	Users must be logged in to view bookmark details
 	The dashboard must contain at least 1 bookmark to be able to display bookmark details

@@ -1,3 +1,6 @@
+# Revision History
+# 11-28-2015 - Initial Draft - Matt
+
 Feature: Testing the register functionality
 	First time users need to register for an account
 

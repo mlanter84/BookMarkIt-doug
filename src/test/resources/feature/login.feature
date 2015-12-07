@@ -1,3 +1,6 @@
+# Revision History
+# 11-28-2015 - Initial Draft - Matt
+
 Feature: Testing the login functionality
 	User must have an account to login
 

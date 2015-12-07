@@ -1,3 +1,6 @@
+# Revision History
+# 11-28-2015 - Initial Draft - Matt
+
 Feature: Search for a bookmark
 	Users must be logged in to search for bookmarks
 	The dashboard must contain at least 1 bookmark to perform the search
