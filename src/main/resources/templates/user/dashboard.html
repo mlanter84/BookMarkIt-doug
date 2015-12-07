@@ -8,17 +8,27 @@
     <title>DashBoard Page Yo</title>
     <script th:src="@{/webjars/knockout/3.4.0/knockout.js}"></script>
     <!--<script th:src="@{/js/bookmarkViewModel.js}"></script>-->
+
+    <link th:href="@{/css/style.css}" rel="stylesheet" />
 </head>
 <body>
 <div layout:fragment="content">
   <p th:text="${user.getUsername()}">Username</p>
 
-  <div th:each="bookmark : ${bookmarks}">
-      <div>
+  <!--<div id="bookmarks" th:each="bookmark : ${bookmarks}">
           <p th:text="${bookmark.getUrl()}">Bookmark URL</p>
           <p th:text="${bookmark.getDescription()}">Bookmark Description</p>
-      </div>
-  </div>
+  </div>-->
+
+    <div id="bookmarks">
+        <ul data-bind="foreach: bookmarks, visible: bookmarks().length > 0">
+            <li>
+                <input data-bind="value: url" />
+                <input data-bind="value: description" />
+                <a data-bind="attr: { href: 'bookmark/' + id }">View</a>
+            </li>
+        </ul>
+    </div>
 
 
   <div id="addBookmark">
@@ -34,6 +44,7 @@
       /*<![CDATA[*/
 
       function Bookmark(data) {
+          this.id = ko.observable(data.id)
           this.url = ko.observable(data.url);
           this.description = ko.observable(data.description);
       }
@@ -51,16 +62,18 @@
               console.log("new bookmark url: " + this.newBookmarkUrl());
               self.bookmarks.push(new Bookmark({url: this.newBookmarkUrl(), description: this.newBookmarkDescription()}));
 
-              var postString = /*[[ ${user.getId()} ]]*/ + "/add";
-
               $.ajax(/*[+'/[[${user.getId()}]]'+]*/, {
                   data: ko.toJSON({url: self.newBookmarkUrl, description: self.newBookmarkDescription}),
                   type: "post", contentType: "application/json",
-                  success:
               }).fail(function() {
                   console.log("fail");
               });
           };
+
+          $.getJSON(/*[+'/[[${user.getId()}]]'+]*/, function(allData) {
+              var mapptedBookmarks = $.map(allData, function(bookmark) { return new Bookmark(bookmark)});
+              self.bookmarks(mapptedBookmarks);
+          });
       }
 
       ko.applyBindings(new BookmarkListViewModel());

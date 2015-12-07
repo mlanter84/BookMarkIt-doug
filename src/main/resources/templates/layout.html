@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -38,32 +38,39 @@
         <div class="collapse navbar-collapse" id="navbar-container">
             <ul class="nav navbar-nav">
                 <li class="active"><a th:href="@{/}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
-                <li><a th:href="@{/users/create}"><span class="glyphicon glyphicon-pencil"></span> Register</a></li>
+                <li sec:authorize="isAnonymous()"><a th:href="@{/users/create}"><span class="glyphicon glyphicon-pencil"></span> Register</a></li>
 
             </ul>
-            <form class="navbar-form navbar-left" role="form" th:action="@{/login}"
-                    method="post">
-                <div class="input-group">
-                    	<span class="input-group-addon">
-                        	<span class="glyphicon glyphicon-user"></span>
-                        </span>
-                    <input type="text" class="form-control input-sm" placeholder="username"
-                            id="username" name="username" required="true" />
-                </div>
-                <div class="input-group">
-                    	<span class="input-group-addon">
-                        	<span class="glyphicon glyphicon-lock"></span>
-                        </span>
-                    <input type="password" class="form-control input-sm" placeholder="password"
-                            id="password" name="password" required="true"/>
-                </div>
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox" id="remember-me" name="remember-me" /> Remember Me
-                    </label>
-                </div>
-                <button type="submit" class="btn btn-success">Login</button>
-            </form>
+            <div sec:authorize="isAnonymous()">
+                <form class="navbar-form navbar-left" role="form" th:action="@{/login}"
+                        method="post">
+                    <div class="input-group">
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-user"></span>
+                            </span>
+                        <input type="text" class="form-control input-sm" placeholder="username"
+                                id="username" name="username" required="true" />
+                    </div>
+                    <div class="input-group">
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-lock"></span>
+                            </span>
+                        <input type="password" class="form-control input-sm" placeholder="password"
+                                id="password" name="password" required="true"/>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="remember-me" name="remember-me" /> Remember Me
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-success">Login</button>
+                </form>
+            </div>
+            <div sec:authorize="isAuthenticated()">
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="btn btn-success">Logout</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
